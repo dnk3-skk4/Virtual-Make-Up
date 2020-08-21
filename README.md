@@ -12,7 +12,9 @@ These are the two image I used as my test images. I've included them in this git
 
 ## Lip Color Swap
 
-Lip color swap with Dlib 68 point landmark detector!
+Lip color swap with Dlib 68 point landmark detector!\
+Results:\
+<img src="result/girl-no-makeup-lip-color-change.png" width="324" height="324"><img src="result/girl-no-makeup-2-lip-color-change.png" width="324" height="324">
 
 - Requirements(version I used):
   - OpenCV(4.1.2)
@@ -24,6 +26,27 @@ Lip color swap with Dlib 68 point landmark detector!
 
 ## How it works
 
+<img src="https://www.researchgate.net/publication/327500528/figure/fig9/AS:668192443748352@1536320901358/The-ibug-68-facial-landmark-points-mark-up.ppm" width="324" height="324">
+
+### Obtaining the facial landmarks
+
+The first step is to use facial landmark detection from the image of the face. Using the 68 face predictor model settings, the ```face detector``` and ```landmark detector``` is loaded from dlib.
+
+```
+# Landmark model location
+PREDICTOR_PATH =  "shape_predictor_68_face_landmarks.dat"
+
+# Get the face detector
+faceDetector = dlib.get_frontal_face_detector()
+# The landmark detector is implemented in the shape_predictor class
+landmarkDetector = dlib.shape_predictor(PREDICTOR_PATH)
+```
+
+Using ```getLandmarks``` from ```faceblendcommon```, the 68 landmark points are obtained from the face.
+```
+points = fbc.getLandmarks(faceDetector, landmarkDetector, img)
+```
+<img src="results/landmark_img.PNG" width="324" height="324">
 
 
 ## Hair Color Swap
