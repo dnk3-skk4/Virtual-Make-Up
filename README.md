@@ -43,10 +43,44 @@ landmarkDetector = dlib.shape_predictor(PREDICTOR_PATH)
 ```
 
 Using ```getLandmarks``` from ```faceblendcommon```, the 68 landmark points are obtained from the face.
+
 ```
 points = fbc.getLandmarks(faceDetector, landmarkDetector, img)
 ```
-<img src="results/landmark_img.PNG" width="324" height="324">
+<img src="result/landmark_img.PNG" width="324" height="324">
+
+From the 68 points, we obtain the points for the lips. The lips start from point 49 to point 68. The lips require to be segmented as the upperlips and lowerlips, otherwise the entire mouth will be colored out.
+
+OpenCV's ```pollyFill``` function will used to create the mask for the upper and lower lips, but before the mask can be made, the points have to be re-ordered like a vector so that ```pollyFill``` will draw the mask correctly.
+
+```
+# ordered set of points to draw the mask
+upperlips = points[48:55] + points[60:65][::-1]
+lowerlips = points[48:49] + points[54:60][::-1] + points[64:]
+```
+
+Before we can use ```polyFill``` however, we need to convert them from an array of objects to a numpy array, otherwise you will get an error.
+
+```
+uHull = [[p[0],p[1]] for p in upperlips]
+lHull = [[p[0],p[1]] for p in lowerlips]
+uHull = np.array(uHull)
+lHull = np.array(lHull)
+```
+
+build the mask for the lips
+```
+row, col, _ = choice.shape
+mask = np.zeros((row, col), dtype=choice.dtype)
+
+cv2.fillPoly(mask, [uHull], (255));
+cv2.fillPoly(mask, [lHull], (255));
+
+bit_mask = mask.astype(np.bool)
+```
+
+<img src="result/lips_mask.PNG">
+
 
 
 ## Hair Color Swap
