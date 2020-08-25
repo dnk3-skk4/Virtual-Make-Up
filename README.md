@@ -92,7 +92,7 @@ pixel[:,:,r_], pixel[:,:,g_], pixel[:,:,b_] = color[r_], color[g_], color[b_]
 ```
 <img src="result/pixel_color.PNG" width="50" height="50">
 
-So far what has been accomplished:
+what has been accomplished:
 - Obtaining the points for the upper and lower lips
 - Converting the points to a numpy array for ```polyFill```
 - Creating a boolean mask for the lips
