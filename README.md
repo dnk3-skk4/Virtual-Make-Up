@@ -90,7 +90,7 @@ r_, g_, b_ = 0, 1, 2
 # set the pixel's RGB to the color's RGB
 pixel[:,:,r_], pixel[:,:,g_], pixel[:,:,b_] = color[r_], color[g_], color[b_]
 ```
-<img src="result/pixel_color.PNG">
+<img src="result/pixel_color.PNG" width="50" height="50">
 
 So far what has been accomplished:
 - Obtaining the points for the upper and lower lips
