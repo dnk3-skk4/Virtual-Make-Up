@@ -81,7 +81,49 @@ bit_mask = mask.astype(np.bool)
 
 <img src="result/lips_mask.PNG">
 
+Create a pixel of the color. This pixel is a (1,1,3) shaped objects where each dimension holds a color of the RGB. This pixel will then be converted from the RGB to HSL color space
+```
+# Create the pixel container
+pixel = np.zeros((1,1,3), dtype=np.uint8)
+r_, g_, b_ = 0, 1, 2
 
+# set the pixel's RGB to the color's RGB
+pixel[:,:,r_], pixel[:,:,g_], pixel[:,:,b_] = color[r_], color[g_], color[b_]
+```
+<img src="result/pixel_color.PNG">
+
+So far what has been accomplished:
+- Obtaining the points for the upper and lower lips
+- Converting the points to a numpy array for ```polyFill```
+- Creating a boolean mask for the lips
+- Creating a pixel container for the RGB color
+
+### Color Swaping
+
+To perform the color swap, image and pixel are converted from RGB to HSL color space. The color space conversion is done so that the image will retain its luminance and saturation values while only swaping the hue. The hue contains the color of the image, hence how the color swap works.
+```
+# Create a copy of the original image
+out = choice.copy()
+
+# Convert the images from RGB to HLS
+pixel_hsl = cv2.cvtColor(pixel, cv2.COLOR_RGB2HLS)
+outhsv = cv2.cvtColor(out,cv2.COLOR_RGB2HLS)
+
+# Hue channel of the image
+channel = 0
+
+# extract the hue channels
+hue_img = outhsv[:,:,channel]
+hue_pixel = pixel_hsl[:,:,0]
+
+# Perform the color swap
+hue_img[bit_mask] = hue_pixel[0,0]
+
+# Convert back from HLS to RGB color space
+out = cv2.cvtColor(outhsv,cv2.COLOR_HLS2RGB)
+```
+Resulting image
+<img src="result/girl-no-makeup-2-lip-color-change.png" width="324" height="324">
 
 ## Hair Color Swap
 
