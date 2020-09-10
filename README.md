@@ -130,8 +130,16 @@ Resulting image
 - Requirements:
   - ![Hair segmentation model](https://github.com/thangtran480/hair-segmentation/releases)
   - Keras(2.4.3)
-  
+ 
+Hair color swap with a convolutional neural network. Credits to [thangtran480](https://github.com/thangtran480) for the hair detector.
+
+Results:\
+<img src="result/girl-no-makeup-hair-color-change.png" width="324" height="324"><img src="result/girl-no-makeup-2hair-color-change.png" width="324" height="324">
+
 ### Helper method
+
+This method is code taken fom the author of the hair detector cnn.
+
 ```
 def predict(image, height=224, width=224):
     im = image.copy()
@@ -146,3 +154,49 @@ def predict(image, height=224, width=224):
     mask = cv2.resize(mask, (col, row))
     return mask
 ```
+
+### How it works
+
+The hair detector model is loaded.
+
+```
+model = keras.models.load_model('./models/hairnet_matting.hdf5')
+```
+The neural network predicts where is hair in the image. Then a threshold 
+
+```
+# Don't overwrite the image
+img = choice.copy()
+
+# Predict the mask from the image
+hairmask = predict(img)
+```
+
+<img src="result/hairmask.png" width="324" height="324">
+
+The resulting image is a single dimension, ```(512, 512)``` shaped image in this case, ```float``` image. The mask isn't complete yet, we have to pick a threshold, ```0.7``` in this case and then perform a conversion from ```float``` to ```boolean```. And then we will finally have a boolean mask.
+
+```
+# Mask Creation
+threshold = 0.7
+bit8_hairmask = hairmask.copy()
+
+# Convert the float hairmask into uint8 values
+bit8_hairmask[bit8_hairmask > threshold] = 255
+bit8_hairmask[bit8_hairmask <= threshold] = 0
+
+# convert unint8 mask to a boolean mask
+bin_hairmask = bit8_hairmask.astype(np.bool)
+```
+
+The boolean mask is completed, now we create a 1x1 pixel image and with the chosen color
+
+```
+pixel = np.zeros((1,1,3), dtype=np.uint8)
+r_ = 0
+g_ = 1
+b_ = 2
+
+pixel[:,:,r_], pixel[:,:,g_], pixel[:,:,b_] = color[r_], color[g_], color[b_]
+```
+
