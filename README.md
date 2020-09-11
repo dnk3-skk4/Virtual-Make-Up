@@ -189,7 +189,7 @@ bit8_hairmask[bit8_hairmask <= threshold] = 0
 bin_hairmask = bit8_hairmask.astype(np.bool)
 ```
 
-The boolean mask is completed, now we create a 1x1 pixel image and with the chosen color
+The boolean mask is completed, now we create a 1x1 pixel image and with the chosen color. This is the same step that was done in the ```lip color change```, we're making a ```1x1``` pixel with the color in RGB and converting that single pixel from the RGB space to the HLS space.
 
 ```
 pixel = np.zeros((1,1,3), dtype=np.uint8)
@@ -200,3 +200,24 @@ b_ = 2
 pixel[:,:,r_], pixel[:,:,g_], pixel[:,:,b_] = color[r_], color[g_], color[b_]
 ```
 
+Convert both the image and the pixel from RGB to HLS space. Finally, swap the ```hue``` of the 
+
+```
+out = choice.copy()
+
+# Convert image of person from RGB to HLS
+pixel_hsl = cv2.cvtColor(pixel, cv2.COLOR_RGB2HLS)
+hls_img = cv2.cvtColor(out, cv2.COLOR_RGB2HLS)
+channel = 0
+channel = 0
+
+# extract the hue channels
+hue_img = outhsv[:,:,channel]
+hue_pixel = pixel_hsl[:,:,0]
+
+hue_img[bin_hairmask] = hue_pixel[0,0]
+
+out = cv2.cvtColor(outhsv,cv2.COLOR_HLS2RGB)
+```
+
+<img src="result/girl-no-makeup-2hair-color-change.png" width="324" height="324">
